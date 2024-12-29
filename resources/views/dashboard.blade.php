@@ -26,7 +26,7 @@
                     @csrf
                     <input type="text" name="name" placeholder="Employee Name" required class="w-full p-2 border border-gray-300 rounded-md">
                     <input type="email" name="email" placeholder="Employee Email" required class="w-full p-2 border border-gray-300 rounded-md">
-                    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md">Add Employee</button>
+                    <button type="submit" class="w-full bg-blue-500 text-black p-2 rounded-md">Add Employee</button>
                 </form>
 
                 {{-- Add Client Form --}}
@@ -34,7 +34,7 @@
                     @csrf
                     <input type="text" name="name" placeholder="Client Name" required class="w-full p-2 border border-gray-300 rounded-md">
                     <input type="email" name="email" placeholder="Client Email" required class="w-full p-2 border border-gray-300 rounded-md">
-                    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md">Add Client</button>
+                    <button type="submit" class="w-full bg-blue-500 text-black p-2 rounded-md">Add Client</button>
                 </form>
             </div>
             <div class="bg-gray-100 p-4 rounded-md shadow-md">
