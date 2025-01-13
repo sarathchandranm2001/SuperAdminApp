@@ -75,14 +75,14 @@
                             </li>
                         </ul>
                     </div>
-
+        
                     <!-- Main Content Area -->
                     <div class="w-3/4 ml-2" id="employee-content">
                         <div class="text-gray-300">Loading...</div>
                     </div>
                 </div>
             </div>
-
+        
         @elseif ($user->role === 'client')
             <div class="client-panel mt-4">
                 <h2 class="text-2xl text-yellow-400 mb-2">Client Panel</h2>
@@ -101,7 +101,7 @@
                             </li>
                         </ul>
                     </div>
-
+        
                     <!-- Main Content Area -->
                     <div class="w-3/4 ml-2" id="client-content">
                         <div class="text-gray-300 p-2">Loading...</div>
@@ -163,18 +163,18 @@
             window.openModal = function() {
                 const form = document.getElementById('userForm');
                 form.action = "{{ route('admin.users.store') }}";
-
+                
                 // Reset to POST method for new users
                 let methodInput = form.querySelector('input[name="_method"]');
                 if (methodInput) {
                     methodInput.value = 'POST';
                 }
-
+                
                 // Clear all fields
                 form.reset();
                 document.getElementById('user_id').value = '';
                 document.getElementById('userModalLabel').innerText = 'Create User';
-
+                
                 // Show modal
                 document.getElementById('userModal').classList.remove('hidden');
             };
@@ -205,7 +205,7 @@
             window.editUser = function(user) {
                 const form = document.getElementById('userForm');
                 form.action = `/admin/manage-users/${user.id}`;
-
+                
                 // Add method spoofing for PATCH request
                 let methodInput = form.querySelector('input[name="_method"]');
                 if (!methodInput) {
@@ -221,14 +221,14 @@
                 document.getElementById('name').value = user.name || '' ;
                 document.getElementById('email').value = user.email || '';
                 document.getElementById('role').value = user.role || '';
-
+                
                 // Clear password fields
                 document.getElementById('password').value = '';
                 document.getElementById('password_confirmation').value = '';
 
                 // Update modal title
                 document.getElementById('userModalLabel').innerText = 'Edit User';
-
+                
                 // Show modal
                 document.getElementById('userModal').classList.remove('hidden');
             };
