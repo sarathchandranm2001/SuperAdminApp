@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\InstallerController;
-use App\Http\Middleware\CheckInstallation;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClientController;
+use App\Http\Middleware\CheckInstallation;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\InstallerController;
 
 // Home route
 Route::get('/', function () {
@@ -60,5 +61,11 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
 });
 
 // Include authentication routes
+
+
+Route::get('/payment', [PaymentController::class, 'showPaymentPage'])->name('payment.page');
+Route::post('/payment', [PaymentController::class, 'processPayment'])->name('payment.process');
+Route::post('/payment/verify', [PaymentController::class, 'verifyPayment'])->name('payment.verify');
+
 require __DIR__.'/auth.php';
 
