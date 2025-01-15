@@ -15,9 +15,21 @@
             </div>
         @endif
 
-        <button class="bg-blue-600 text-white rounded px-4 py-2 mb-4" onclick="openModal()">Create New User</button>
+        <div class="flex justify-between items-center mb-4">
+            <button class="bg-blue-600 text-white rounded px-4 py-2" onclick="openModal()">Create New User</button>
 
-        <div class="overflow-x-auto ">
+            <div class="flex items-center">
+                <label for="roleFilter" class="text-gray-300 mr-2">Filter by Role:</label>
+                <select id="roleFilter" onchange="filterUsers(this.value)" class="bg-gray-700 text-white rounded px-3 py-2 border border-gray-600">
+                    <option value="">All Roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="employee">Employee</option>
+                    <option value="client">Client</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
             <table class="min-w-max w-full border-collapse border border-gray-600">
                 <thead>
                     <tr>
@@ -27,9 +39,9 @@
                         <th class="border border-gray-600 p-2 text-left text-gray-300">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="userTableBody">
                     @foreach ($users as $user)
-                        <tr class="hover:bg-gray-700">
+                        <tr class="hover:bg-gray-700 user-row" data-role="{{ $user->role }}">
                             <td class="border border-gray-600 p-2 text-gray-200">{{ $user->name }}</td>
                             <td class="border border-gray-600 p-2 text-gray-200">{{ $user->email }}</td>
                             <td class="border border-gray-600 p-2 text-gray-200">{{ $user->role }}</td>
@@ -50,7 +62,7 @@
                 </tbody>
             </table>
         </div>
-        {{ $users->links() }} <!-- For pagination -->
+        {{ $users->links() }}
     </div>
 
     <!-- Modal for Create/Edit User -->
@@ -98,5 +110,3 @@
         </div>
     </div>
     </div>
-
-<!--errorcorrected-->
