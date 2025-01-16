@@ -44,6 +44,7 @@
                             <li class="my-2">
                                 <a href="#" class="admin-link text-blue-300 hover:text-blue-400" aria-label="View Reports" data-target="view-reports">View Reports</a>
                             </li>
+                            
                             <li class="my-2">
                                 <a href="#" class="admin-link text-blue-300 hover:text-blue-400" aria-label="Admin Settings" data-target="settings">Admin Settings</a>
                             </li>
@@ -73,6 +74,10 @@
                             <li class="my-2">
                                 <a href="#" class="text-teal-300 hover:text-teal-400" aria-label="View Schedule">View Schedule</a>
                             </li>
+                            <li class="my-2">
+                                <a href="#" class="text-teal-300 hover:text-teal-400 gst-link" data-target="gst-module" aria-label="GST Module">GST Module</a>
+                            </li>
+                            
                         </ul>
                     </div>
         
@@ -112,101 +117,127 @@
             <p class="text-red-400 text-lg">Role not recognized.</p>
         @endif
     </div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const links = document.querySelectorAll('.admin-link');
-            const contentDiv = document.getElementById('admin-content');
-
-            // Load default content from localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+        // Admin Panel Script
+        const adminLinks = document.querySelectorAll('.admin-link');
+        const adminContentDiv = document.getElementById('admin-content');
+        const employeeLinks = document.querySelectorAll('.gst-link');
+        const employeeContentDiv = document.getElementById('employee-content');
+    
+        // Load default content from localStorage for Admin Panel
+        if (adminContentDiv) {
             const activeMenu = localStorage.getItem('activeMenu') || 'manage-users';
-            loadContent(activeMenu);
-            highlightActiveLink(activeMenu);
-
-            links.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = this.getAttribute('data-target');
-                    loadContent(target);
-                    localStorage.setItem('activeMenu', target); // Save active menu
-                    highlightActiveLink(target);
-                });
+            loadContent(activeMenu, 'admin');
+            highlightActiveLink(activeMenu, 'admin');
+        }
+    
+        // Admin event listeners
+        adminLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.getAttribute('data-target');
+                loadContent(target, 'admin');
+                localStorage.setItem('activeMenu', target);
+                highlightActiveLink(target, 'admin');
             });
-
-            function loadContent(target) {
-                fetch(`/admin/${target}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(html => {
-                        contentDiv.innerHTML = html;
-                    })
-                    .catch(error => {
-                        console.error('Error loading content:', error);
-                        contentDiv.innerHTML = '<p class="text-red-400">Error loading content. Please try again later.</p>';
-                    });
+        });
+    
+        // Employee event listeners
+        employeeLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.getAttribute('data-target');
+                loadContent(target, 'employee');
+                highlightActiveLink(target, 'employee');
+            });
+        });
+    
+        // Unified content loading function
+        function loadContent(target, panel) {
+            const url = panel === 'admin' ? `/admin/${target}` : `/employee/${target}`;
+            const contentDiv = panel === 'admin' ? adminContentDiv : employeeContentDiv;
+    
+            // Show loading state
+            if (contentDiv) {
+                contentDiv.innerHTML = '<div class="text-gray-300">Loading...</div>';
             }
-
-            function highlightActiveLink(target) {
-                links.forEach(link => {
-                    if (link.getAttribute('data-target') === target) {
-                        link.classList.add('font-bold', 'text-blue-400');
-                    } else {
-                        link.classList.remove('font-bold', 'text-blue-400');
+    
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    if (contentDiv) {
+                        contentDiv.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading content:', error);
+                    if (contentDiv) {
+                        contentDiv.innerHTML = '<p class="text-red-400">Error loading content. Please try again later.</p>';
                     }
                 });
-            }
-
-            window.openModal = function() {
-                const form = document.getElementById('userForm');
+        }
+    
+        // Unified highlight active link function
+        function highlightActiveLink(target, panel) {
+            const links = panel === 'admin' ? adminLinks : employeeLinks;
+            const activeClass = panel === 'admin' ? 'text-blue-400' : 'text-teal-400';
+    
+            links.forEach(link => {
+                if (link.getAttribute('data-target') === target) {
+                    link.classList.add('font-bold', activeClass);
+                } else {
+                    link.classList.remove('font-bold', activeClass);
+                }
+            });
+        }
+    
+        // Modal Functions for Admin Panel
+        window.openModal = function() {
+            const form = document.getElementById('userForm');
+            if (form) {
                 form.action = "{{ route('admin.users.store') }}";
                 
-                // Reset to POST method for new users
                 let methodInput = form.querySelector('input[name="_method"]');
                 if (methodInput) {
                     methodInput.value = 'POST';
                 }
                 
-                // Clear all fields
                 form.reset();
                 document.getElementById('user_id').value = '';
                 document.getElementById('userModalLabel').innerText = 'Create User';
-                
-                // Show modal
                 document.getElementById('userModal').classList.remove('hidden');
-            };
-
-            window.closeModal = function() {
-                document.getElementById('userModal').classList.add('hidden');
-            };
-
-            window.clearForm = function() {
-                document.getElementById('userForm').reset();
+            }
+        };
+    
+        window.closeModal = function() {
+            const modal = document.getElementById('userModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        };
+    
+        window.clearForm = function() {
+            const form = document.getElementById('userForm');
+            if (form) {
+                form.reset();
                 document.getElementById('user_id').value = '';
                 document.getElementById('userModalLabel').innerText = 'Create User';
-                const input = document.querySelector('input[name="_method"]');
-                if (input) input.remove(); // Remove method spoofing input if exists
-            };
-
-                        // Function to open modal for creating a new user
-            function openCreateUserModal() {
-                // Reset the form fields
-                document.getElementById('userForm').reset();
-                document.getElementById('user_id').value = ''; // Clear hidden user_id
-                document.getElementById('userModalLabel').innerText = 'Create User'; // Set title for creation
-                document.getElementById('userForm').action = "{{ route('admin.users.store') }}"; // Set action for creation
-                document.getElementById('userModal').classList.remove('hidden'); // Show the modal
+                const input = form.querySelector('input[name="_method"]');
+                if (input) input.remove();
             }
-
-            // Function to open modal for editing an existing user
-            window.editUser = function(user) {
-                const form = document.getElementById('userForm');
+        };
+    
+        window.editUser = function(user) {
+            const form = document.getElementById('userForm');
+            if (form) {
                 form.action = `/admin/manage-users/${user.id}`;
                 
-                // Add method spoofing for PATCH request
                 let methodInput = form.querySelector('input[name="_method"]');
                 if (!methodInput) {
                     methodInput = document.createElement('input');
@@ -215,23 +246,20 @@
                     form.appendChild(methodInput);
                 }
                 methodInput.value = 'PATCH';
-
-                // Set form fields
+    
                 document.getElementById('user_id').value = user.id;
-                document.getElementById('name').value = user.name || '' ;
+                document.getElementById('name').value = user.name || '';
                 document.getElementById('email').value = user.email || '';
                 document.getElementById('role').value = user.role || '';
                 
-                // Clear password fields
                 document.getElementById('password').value = '';
                 document.getElementById('password_confirmation').value = '';
-
-                // Update modal title
-                document.getElementById('userModalLabel').innerText = 'Edit User';
                 
-                // Show modal
+                document.getElementById('userModalLabel').innerText = 'Edit User';
                 document.getElementById('userModal').classList.remove('hidden');
-            };
-        });
+            }
+        };
+    });
     </script>
+    
 </x-app-layout>

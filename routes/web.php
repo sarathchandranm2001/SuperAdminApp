@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GSTController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Http\Middleware\CheckInstallation;
@@ -35,10 +36,16 @@ Route::middleware('auth')->group(function () {
 });
 
 // Employee routes
+// In web.php
 Route::middleware(['auth', 'isEmployee'])->group(function () {
     Route::get('/employee/dashboard', [EmployeeController::class, 'index'])->name('employee.dashboard');
-    // Add more employee-specific routes here
+    Route::get('/employee/gst-module', [EmployeeController::class, 'viewGstModule'])->name('employee.gst_module');
+    Route::post('/employee/gst/file', [EmployeeController::class, 'fileGst'])->name('employee.gst.file');
+    Route::get('/employee/gst/reports', [EmployeeController::class, 'gstReports'])->name('employee.gst.reports');
+    Route::get('/employee/{target}', [EmployeeController::class, 'loadContent'])->name('employee.loadContent');
 });
+
+
 
 // Client routes
 Route::middleware(['auth', 'isClient'])->group(function () {
@@ -58,6 +65,10 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/admin/view-reports', [AdminController::class, 'viewReports'])->name('admin.view-reports');
     Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
     Route::post('/admin/settings', [AdminController::class, 'updateSettings'])->name('admin.update.settings');
+    Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    
+});
+
 });
 
 // Include authentication routes

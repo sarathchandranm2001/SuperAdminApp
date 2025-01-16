@@ -103,6 +103,12 @@ public function destroy(User $user): RedirectResponse
     $user->delete();
     return back()->with('success', 'User deleted successfully');
 }
+    public function gstModule()
+{
+    // Return a view for the GST module
+    return view('admin.gst-module');
+}
+
 
     public function viewReports(): View
 {
